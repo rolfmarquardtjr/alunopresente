@@ -96,6 +96,7 @@ def enviar_mensagens_lote(mensagens):
         for i, msg in enumerate(mensagens):
             st.info(f"Enviando mensagem para {msg['numero']} ({i + 1}/{len(mensagens)})...")
             try:
+                # Enviar mensagem usando pywhatkit
                 pywhatkit.sendwhatmsg_instantly(f"+{msg['numero']}", msg['mensagem'], wait_time=10, tab_close=True, close_time=5)
                 st.success(f"Mensagem enviada para {msg['numero']} com sucesso!")
                 sleep(intervalo)  # Intervalo definido pelo backend para garantir que a mensagem seja enviada antes da próxima
@@ -292,40 +293,4 @@ def run_streamlit():
             st.header("Mensagens Recebidas")
 
             # Certifique-se de abrir a conexão com o banco de dados
-            with sqlite3.connect('attendance.db') as conn:
-                logs = pd.read_sql_query("SELECT * FROM attendance_log WHERE resposta IS NOT NULL", conn)
-
-                if logs.empty:
-                    st.write("Nenhuma resposta foi recebida ainda.")
-                else:
-                    st.write(f"{len(logs)} respostas recebidas.")
-                    st.dataframe(logs[['aluno', 'responsavel', 'data', 'resposta']])
-
-        elif page == "Editar Aluno":
-            # Página para editar um aluno individualmente
-            st.header("Editar Informações de Aluno")
-
-            df = pd.read_excel('alunos_atualizados.xlsx')
-            alunos = df['Nome do Aluno'].unique()
-
-            # Selecionar aluno para edição
-            selected_aluno = st.selectbox("Selecione o aluno", alunos)
-
-            aluno_data = df[df['Nome do Aluno'] == selected_aluno]
-
-            # Exibir dados atuais do aluno e permitir edição
-            nome = st.text_input("Nome do Aluno", aluno_data['Nome do Aluno'].values[0])
-            responsavel = st.text_input("Responsável", aluno_data['responsavel'].values[0])
-            celular = st.text_input("Celular do Responsável", aluno_data['Celular responsável'].values[0])
-            serie = st.text_input("Série", aluno_data['série'].values[0])
-
-            if st.button("Salvar Alterações"):
-                # Atualizar os dados no DataFrame
-                df.loc[df['Nome do Aluno'] == selected_aluno, ['Nome do Aluno', 'responsavel', 'Celular responsável', 'série']] = [nome, responsavel, celular, serie]
-                
-                # Salvar a planilha atualizada
-                df.to_excel('alunos_atualizados.xlsx', index=False)
-                st.success(f"Dados de {selected_aluno} atualizados com sucesso!")
-
-if __name__ == "__main__":
-    run_streamlit()
+           
