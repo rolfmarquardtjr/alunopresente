@@ -88,19 +88,19 @@ def set_page_style():
     )
 
 # Função para enviar mensagens em lote via PyWhatKit
-import pyautogui
+from time import sleep
 
 def enviar_mensagens_lote(mensagens):
     intervalo = 10  # Intervalo fixo de 10 segundos entre os envios
     try:
         for i, msg in enumerate(mensagens):
             st.info(f"Enviando mensagem para {msg['numero']} ({i + 1}/{len(mensagens)})...")
-            pywhatkit.sendwhatmsg_instantly(f"+{msg['numero']}", msg['mensagem'], wait_time=10, tab_close=False)
-            time.sleep(15)  # Tempo para garantir que a mensagem seja enviada
-            pyautogui.hotkey('ctrl', 'w')  # Fecha a aba atual do navegador
-            st.success(f"Mensagem enviada para {msg['numero']} com sucesso!")
-            if i < len(mensagens) - 1:
-                time.sleep(intervalo)  # Intervalo definido pelo backend para garantir que a mensagem seja enviada antes da próxima
+            try:
+                pywhatkit.sendwhatmsg_instantly(f"+{msg['numero']}", msg['mensagem'], wait_time=10, tab_close=True, close_time=5)
+                st.success(f"Mensagem enviada para {msg['numero']} com sucesso!")
+                sleep(intervalo)  # Intervalo definido pelo backend para garantir que a mensagem seja enviada antes da próxima
+            except Exception as e:
+                st.error(f"Erro ao enviar mensagem para {msg['numero']}: {e}")
         return {'status': 'sucesso', 'mensagem': 'Todas as mensagens foram enviadas com sucesso'}
     except Exception as e:
         return {'status': 'erro', 'mensagem': f'Erro ao enviar mensagens: {e}'}
