@@ -1,0 +1,7 @@
+flask
+pandas
+openpyxl
+pywebio
+pywhatkit
+pyautogui
+Pillow
